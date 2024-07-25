@@ -1,68 +1,70 @@
-# Astro Starter Kit: Blog
+# x-satori - Astro file endpoints example
+
+**Preview**: <https://satori-astro.vercel.app/blog/>
+
+This example demonstrates how to use the Astro [file-endpoints](https://docs.astro.build/en/guides/endpoints/) to generate **posts cover image** and **Open Graph image**.
+
+![demo](./README-banner.png)
+
+## Get-Started
+
+### 1. Install Dependencies
+
+```bash
+npm install -D x-satori @resvg/resvg-js jimp
+```
+
+- [x-satori](https://github.com/Zhengqbbb/x-satori) - Using Astro file (.astro) as template to generate image SVG.
+- [@resvg/resvg-js](https://www.npmjs.com/package/@resvg/resvg-js) - Convert SVG to PNG.
+- [jimp](https://www.npmjs.com/package/jimp) - Image optimization, compression, editing, cropping, etc.  This example mainly for **PNG to JPEG + quality compression**.
+
+### 2. Create utils folder and files
+
+[og](./src/og)
 
 ```sh
-npm create astro@latest -- --template blog
+.
+├── config.ts       # x-satori Configuration file - Provide for index.ts and x-satori dev CLI
+├── index.ts        # Provide for Astro file-endpoints 
+└── Template.astro  # Astro file template - Provide for index.ts and x-satori dev CLI
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
-
-Features:
-
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+```sh
+# Can using x-satori CLI to create dev server to preview and design the template
+npm run dev:og
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### 3. Create Astro [file-endpoints](https://docs.astro.build/en/guides/endpoints/)
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+ The example target is generate `dist/og/*.jpeg`.<br>
+ So that touch a file `src/pages/og/[slug].jpeg.ts`
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+ ```ts
+ import type { APIRoute } from 'astro'
+import { type CollectionEntry, getCollection } from 'astro:content';
+import { getPostImageBuffer } from '../../og';
 
-Any static assets, like images, can be placed in the `public/` directory.
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
 
-## 🧞 Commands
+    return posts
+        .map(post => ({
+            params: { slug: post.slug },
+            props: { ...post },
+        }));
+}
 
-All commands are run from the root of the project, from a terminal:
+export const GET: APIRoute = async ({ props }) =>
+    new Response(
+        await getPostImageBuffer(props as CollectionEntry<'blog'>),
+        {
+            headers: { 'Content-Type': 'image/jpeg' },
+        },
+    )
+ ```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### 4. 🤗 That it! Have enjoy - Run `npm run build`
 
-## 👀 Want to learn more?
+![demo](./README-reasult.png)
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
