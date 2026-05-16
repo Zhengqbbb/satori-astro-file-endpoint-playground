@@ -6,6 +6,25 @@ This example demonstrates how to use the Astro [file-endpoints](https://docs.ast
 
 ![demo](./README-banner.png)
 
+## Running example to local
+
+```bash
+npx degit Zhengqbbb/x-satori/examples/astro-file-endpoint <file_name>
+
+cd <file_name>
+npm install
+
+# Development Image Template Model
+npm run dev:og
+
+# Development Website
+npm run dev
+# Build Website
+npm run build
+# Preview Website
+npm run preview
+```
+
 ## Get-Started
 
 ### 1. Install Dependencies
@@ -25,14 +44,15 @@ npm install -D x-satori @resvg/resvg-js jimp
 ```sh
 .
 ├── config.ts       # x-satori Configuration file - Provide for index.ts and x-satori dev CLI
-├── index.ts        # Provide for Astro file-endpoints 
+├── index.ts        # Provide for Astro file-endpoints
 └── Template.astro  # Astro file template - Provide for index.ts and x-satori dev CLI
 ```
 
-```sh
-# Can using x-satori CLI to create dev server to preview and design the template
-npm run dev:og
-```
+> [!TIP]
+> Can using `x-satori` CLI to create dev server to preview and design the template
+> ```sh
+> npm run dev:og
+> ```
 
 ### 3. Create Astro [file-endpoints](https://docs.astro.build/en/guides/endpoints/)
 
